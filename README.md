@@ -1,8 +1,13 @@
 # 🏥 Hospital Management System
 
+[![CI/CD Pipeline](https://github.com/tanishqdixit47-stack/hospital_management_platform/actions/workflows/deploy.yml/badge.svg)](https://github.com/tanishqdixit47-stack/hospital_management_platform/actions/workflows/deploy.yml)
+
 A full-stack MERN (MongoDB · Express · React · Node.js) mini project for managing **patients**, **doctors** and **appointments**, with a live dashboard of today's hospital activity.
 
 > Every list, count and dropdown in the UI is fetched from the API, which reads MongoDB. Nothing is hardcoded in the frontend.
+
+**🌐 Live demo:** [Frontend](https://hospital-frontend-tinn.onrender.com) · [API](https://hospital-api-nw2i.onrender.com/api/dashboard)
+*(Free-tier Render services spin down when idle — the first request may take ~50 s while the instance wakes up.)*
 
 ---
 
@@ -46,18 +51,51 @@ A full-stack MERN (MongoDB · Express · React · Node.js) mini project for mana
 
 ---
 
+## ☁️ Cloud Deployment & CI/CD
+
+The app runs entirely in the cloud — **Render** (backend web service + frontend static site) with **MongoDB Atlas** as the database. Everything is reproducible from the repository:
+
+| Piece | Where | What it does |
+|---|---|---|
+| `render.yaml` | repo root | Render **Blueprint** — declares `hospital-api` (Node web service) and `hospital-frontend` (static site). One click: Render → New → Blueprint → pick repo |
+| `.github/workflows/deploy.yml` | `main` branch | **CI/CD pipeline** — see below |
+| `MONGO_URI` / `VITE_API_BASE_URL` | Render env vars | Atlas connection string / deployed API URL (never committed) |
+
+**Pipeline flow on every push to `main`:**
+
+```
+git push origin main
+        │
+        ▼
+┌─────────────── CI (GitHub Actions) ───────────────┐
+│ ci-backend:    npm ci · syntax-check every JS file│
+│                · load all modules without err     │
+│ ci-frontend:   npm ci · vite production build     │
+└──────────────┬────────────────────────────────────┘
+               │ both jobs pass
+               ▼
+┌────────────── CD (GitHub Actions) ────────────────┐
+│ triggers Render Deploy Hooks for backend +        │
+│ frontend → both services rebuild & redeploy       │
+└───────────────────────────────────────────────────┘
+```
+
+Required repository secrets: `RENDER_DEPLOY_HOOK_BACKEND`, `RENDER_DEPLOY_HOOK_FRONTEND` (Render → Service → Settings → Deploy Hook).
+
+---
+
 ## 🚀 Getting Started
 
 ### Prerequisites
 - **Node.js 18+**
-- **MongoDB** running locally on port 27017 — or a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster
+- **MongoDB** running locally on port 27017 — or a [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) cluster (free M0 tier is used in the live demo)
 
 ### Installation
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<your-username>/hospital-mini-project.git
-cd hospital-mini-project
+git clone https://github.com/tanishqdixit47-stack/hospital_management_platform.git
+cd hospital_management_platform
 
 # 2. Backend — install, seed sample data, start API
 cd backend
