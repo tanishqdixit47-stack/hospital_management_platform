@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// All calls go to /api/... (Vite proxies them to http://localhost:5000).
-const http = axios.create({ baseURL: '/api' });
+// Locally, calls go to the same origin (/api...) and the Vite dev server proxies
+// them to http://localhost:5000. In production, VITE_API_BASE_URL (set in Render)
+// points at the deployed backend, e.g. https://hospital-api.onrender.com/api.
+const http = axios.create({ baseURL: import.meta.env.VITE_API_BASE_URL || '/api' });
 
 // Turns an Axios error into a message a user can read.
 export const getErrorMessage = (err) =>
