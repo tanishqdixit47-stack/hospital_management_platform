@@ -28,11 +28,10 @@ services:
         value: production
 
   # ---------------- Frontend: React + Vite static site ----------------
+  # (static sites are served from a global CDN — no region/plan needed)
   - type: web
     name: hospital-frontend
     runtime: static
-    region: singapore
-    plan: free
     rootDir: frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
